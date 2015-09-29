@@ -4,21 +4,58 @@
 		function HandleKeyPress(event){
 			var char = String.fromCharCode(event.keyCode).toUpperCase();
 			if(char=="C"){
-			  document.writeln("Clear");
+			  document.getElementById("mode").innerHTML = "Clear";
+			  DoClear();
 		    } else if (char=="Z"){
-		    	document.writeln("Draw");
+		    	document.getElementById("mode").innerHTML = "Draw";
 		    }
 		    else if (char=="X"){
-		    	document.writeln("Erase");
+		    	document.getElementById("mode").innerHTML = "Erase";
 		    }
-		    else{document.writeln("Cats");}
+		    	
+		    else {
+		    	document.getElementById("mode").innerHTML = "Cats";
+			}
 		}
+
+function ThisIsACats(event){
+
+var penX= event.clientX;
+var penY= event.clientY;
+var penSize= 10;
+var penColor= "#750075";
+
+var canvas= document.getElementById("MyCanvas");
+var context=canvas.getContext('2d');
+
+context.beginPath();
+context.fillStyle= penColor;
+context.arc(penX, penY, penSize/2, 0, Math.PI*2, true);
+context.closePath();
+context.fill();
+}
+
+function DoClear(event){
+	var canvas= document.getElementById("MyCanvas");
+var context=canvas.getContext('2d');
+
+context.fillStyle= "#FFFFFF";
+context.fillRect(0,0, canvas.width, canvas.height);
+}
+
 		</script>
 	</head>
 	<body onkeypress="HandleKeyPress(event)">
 		<script>
 
 		</script>
+ <canvas id="MyCanvas" width="600" height="400" style="border:5px solid #505050;" onmousedown="ThisIsACats(event)"> your browser does not support the nasty little hobbitses 
+
+
+ </canvas>
+<p id="mode"> This is a cats. </p>
+
+
 	</body>
 </html>
 
