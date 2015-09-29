@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<script> //Cats
+		function HandleKeyPress(event){
+			var char = String.fromCharCode(event.keyCode).toUpperCase();
+			if(char=="C"){
+			  document.writeln("Clear");
+		    } else if (char=="Z"){
+		    	document.writeln("Draw");
+		    }
+		    else if (char=="X"){
+		    	document.writeln("Erase");
+		    }
+		    else{document.writeln("Cats");}
+		}
+		</script>
+	</head>
+	<body onkeypress="HandleKeyPress(event)">
+		<script>
+
+		</script>
+	</body>
+</html>
+
