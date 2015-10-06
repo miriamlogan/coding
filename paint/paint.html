@@ -1,6 +1,16 @@
 <html>
 	<head>
-		<script> //Cats
+		<script> 
+
+var penSize= 10;
+var penColor= "#750075";
+
+var penX= 0;
+var penY= 0;
+var isPenDown = 0; // 0 means up, 1 means down.
+
+
+
 		function HandleKeyPress(event){
 			var char = String.fromCharCode(event.keyCode).toUpperCase();
 			if(char=="C"){
@@ -8,9 +18,17 @@
 			  DoClear();
 		    } else if (char=="Z"){
 		    	document.getElementById("mode").innerHTML = "Draw";
+
+				penColor="#750075";
+				penSize= 10;
+
 		    }
 		    else if (char=="X"){
 		    	document.getElementById("mode").innerHTML = "Erase";
+		   
+				penColor="#FFFFFF";
+				penSize= 15;
+
 		    }
 		    	
 		    else {
@@ -18,21 +36,55 @@
 			}
 		}
 
-function ThisIsACats(event){
 
-var penX= event.clientX;
-var penY= event.clientY;
-var penSize= 10;
-var penColor= "#750075";
+function DrawCircle(context,x,y)
+{
+	context.beginPath();
+	context.fillStyle= penColor;
+	context.arc(x, y, penSize/2, 0, Math.PI*2, true);
+	context.closePath();
+	context.fill();
+}
 
-var canvas= document.getElementById("MyCanvas");
-var context=canvas.getContext('2d');
+function WhenMouseDown(event){
+	isPenDown = 1;
+	penX= event.clientX;
+	penY= event.clientY;
 
-context.beginPath();
-context.fillStyle= penColor;
-context.arc(penX, penY, penSize/2, 0, Math.PI*2, true);
-context.closePath();
-context.fill();
+	var canvas= document.getElementById("MyCanvas");
+	var context=canvas.getContext('2d');
+	DrawCircle(context, penX, penY);
+}
+
+function WhenMouseMove(event){
+	
+	//	This is supposed to figure out when the mouse is down, and then it
+	if(isPenDown == 1){
+		var mouseX = event.clientX;
+		var mouseY = event.clientY;
+
+		var canvas= document.getElementById("MyCanvas");
+		var context=canvas.getContext('2d');
+
+		DrawCircle(context, mouseX, mouseY);
+
+		context.beginPath();
+		context.moveTo(penX, penY);
+		context.lineTo(mouseX, mouseY);
+		context.lineWidth = penSize;
+		context.strokeStyle = penColor;
+		context.closePath();
+		context.stroke();
+
+
+		penX = mouseX;
+		penY = mouseY;
+	}
+}
+
+function WhenMouseUp(event)
+{
+	isPenDown = 0;
 }
 
 function DoClear(event){
@@ -49,7 +101,7 @@ context.fillRect(0,0, canvas.width, canvas.height);
 		<script>
 
 		</script>
- <canvas id="MyCanvas" width="600" height="400" style="border:5px solid #505050;" onmousedown="ThisIsACats(event)"> your browser does not support the nasty little hobbitses 
+ <canvas id="MyCanvas" width="600" height="400" style="border:5px solid #505050;" onmousedown="WhenMouseDown(event)" onmousemove="WhenMouseMove(event)" onmouseup="WhenMouseUp(event)"> your browser does not support the nasty little hobbitses 
 
 
  </canvas>
