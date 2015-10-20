@@ -2,14 +2,23 @@
 	<head>
 		<script> 
 
-var penSize= 10;
+var RegularPenSize = 10;
+var penSize= RegularPenSize;
 var penColor= "#750075";
+var SavePenColor = penColor
+
+var IsErasing = 0;	
 
 var penX= 0;
 var penY= 0;
 var isPenDown = 0; // 0 means up, 1 means down.
 
+function ClickColor() {
 
+	var input = document.getElementById("html5colorpicker");
+	SavePenColor = penColor =input.value;
+
+}
 
 		function HandleKeyPress(event){
 			var char = String.fromCharCode(event.keyCode).toUpperCase();
@@ -19,16 +28,17 @@ var isPenDown = 0; // 0 means up, 1 means down.
 		    } else if (char=="Z"){
 		    	document.getElementById("mode").innerHTML = "Draw";
 
-				penColor="#750075";
-				penSize= 10;
+				penColor=SavePenColor;
+				penSize= RegularPenSize;
+				IsErasing = 0;
 
 		    }
 		    else if (char=="X"){
 		    	document.getElementById("mode").innerHTML = "Erase";
 		   
 				penColor="#FFFFFF";
-				penSize= 15;
-
+				penSize= 1.5 * RegularPenSize;
+				IsErasing =	1;
 		    }
 		    	
 		    else {
@@ -48,11 +58,14 @@ function DrawCircle(context,x,y)
 
 function WhenMouseDown(event){
 	isPenDown = 1;
-	penX= event.clientX;
-	penY= event.clientY;
-
 	var canvas= document.getElementById("MyCanvas");
 	var context=canvas.getContext('2d');
+
+	var rect= canvas.getBoundingClientRect();
+
+	penX = event.clientX - rect.left;
+	penY = event.clientY - rect.top;
+
 	DrawCircle(context, penX, penY);
 }
 
@@ -60,11 +73,15 @@ function WhenMouseMove(event){
 	
 	//	This is supposed to figure out when the mouse is down, and then it
 	if(isPenDown == 1){
-		var mouseX = event.clientX;
-		var mouseY = event.clientY;
+		
 
 		var canvas= document.getElementById("MyCanvas");
 		var context=canvas.getContext('2d');
+
+		var rect= canvas.getBoundingClientRect();
+		
+		var mouseX = event.clientX - rect.left;
+		var mouseY = event.clientY - rect.top;
 
 		DrawCircle(context, mouseX, mouseY);
 
@@ -95,6 +112,20 @@ context.fillStyle= "#FFFFFF";
 context.fillRect(0,0, canvas.width, canvas.height);
 }
 
+function Change(value)
+{
+var display = document.getElementById("display");
+
+display.innerHTML=value;
+RegularPenSize = value;
+if (IsErasing == 1) {
+	penSize = 1.5 * RegularPenSize;
+}
+else {
+penSize = RegularPenSize;
+}
+}
+
 		</script>
 	</head>
 	<body onkeypress="HandleKeyPress(event)">
@@ -104,10 +135,18 @@ context.fillRect(0,0, canvas.width, canvas.height);
  <canvas id="MyCanvas" width="600" height="400" style="border:5px solid #505050;" onmousedown="WhenMouseDown(event)" onmousemove="WhenMouseMove(event)" onmouseup="WhenMouseUp(event)"> your browser does not support the nasty little hobbitses 
 
 
+
+
  </canvas>
 <p id="mode"> This is a cats. </p>
 
+		<div id="html5DIV">
+          <h3>Pick your own color.:</h3>
+          <input type="color" id="html5colorpicker" class="form-control" onchange="ClickColor()" value="#750075">
+        </div>
+<input id="penSize" type="range" name="points" min="1" max="100" value="10" onchange="Change(this.value)">
 
+<p id="display">Slide this to change the pen size (Currently 10)</p>
 	</body>
 </html>
 
