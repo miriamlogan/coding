@@ -1,0 +1,50 @@
+<html>
+	<head>
+		<script>
+
+		function HandleKeyPress(event){
+
+			  var r = 2 + Math.random() + 0.5;
+			r = Math.floor(r);
+
+			MakeDaName(r);
+
+		}
+
+		function MakeDaName(length){
+
+			var Name = "";
+
+			var Consonants = ["B", "C", "CH",  "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "SH", "ST", "T", "V", "W", "Y", "Z", "' ", ""];
+			var Vowels = ["A", "E", "I", "O", "U", "A", "E", "I", "O", "U", "Y"];
+
+			for (i = 0 ; i < length ; i++){
+
+			n = Math.random() * Consonants.length;
+			n = Math.floor(n);
+			Letter = Consonants[n];	
+
+			Name = Name.concat (Letter);
+
+			var n = Math.random() * Vowels.length;
+			n = Math.floor(n);
+			var Letter = Vowels[n];	
+
+			Name = Name.concat (Letter);
+			}
+
+			document.getElementById ("Namey").innerHTML += "<p>" + Name +" </p>";
+
+		}
+
+		</script>
+	</head>
+	<body onkeypress="HandleKeyPress(event)">
+		<script>
+
+		</script>
+ 
+<p id="Namey"> Bye. </p>
+
+	</body>
+</html>
