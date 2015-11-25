@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<body onkeyup="KeyUp(event)" onkeydown="KeyDown(event)">
+<img src="redball.png"id="x">
+
+<img src="blueball.png"id="y">
+
+<script>
+
+var planet = [];
+
+// We are Planet 0
+
+	planet.push( {
+		element: document.getElementById("x"), 
+		x: 100.0,
+		y: 100.0,
+		vx: 1.0,
+		vy: 0.0,
+		ax: 0.0,
+		ay: 0.0
+	});
+
+	planet[0].element.style.position="absolute";
+
+
+	planet.push( {
+		element: document.getElementById("y"), 
+		x: 450.0,
+		y: 450.0,
+		vx: -1.0,
+		vy: 0.0,
+		ax: 0.0,
+		ay: 0.0
+	});
+
+	planet[1].element.style.position="absolute";
+
+
+var x = 100.0;
+var xAdd = 0.0;
+var xA = 0.0;
+
+var y = 100.0;
+var yAdd = 0.0;
+var yA = 0.0;
+
+var xp = 250;
+var yp = 250;
+var g= 0.3;
+
+	var Acceleration = 0.05;
+
+	function KeyDown(event)
+	{
+	if (event.keyCode == 39)
+	{	
+	planet[0].ax = Acceleration;
+	}
+	else if (event.keyCode == 37)
+	{
+	planet[0].ax = -Acceleration;	
+	}
+	else if (event.keyCode == 38)
+	{
+	planet[0].ay = -Acceleration;	
+	}
+	else if (event.keyCode == 40)
+	{
+	planet[0].ay = Acceleration;	
+	}
+
+	planet[0].element.style.position="absolute";
+	planet[0].element.src="blueball.png";
+
+	}
+
+	function KeyUp(event)
+	{
+if (event.keyCode == 39)
+	{	
+	planet[0].ax = 0;
+	}
+	else if (event.keyCode == 37)
+	{
+	planet[0].ax = 0;	
+	}
+	else if (event.keyCode == 38)
+	{
+	planet[0].ay = 0;	
+	}
+	else if (event.keyCode == 40)
+	{
+	planet[0].ay = 0;	
+	}	
+
+	planet[0].element.style.position="absolute";
+	planet[0].element.src="redball.png";
+	
+	}
+
+	function Tick()
+	{
+
+	var dx = planet[1].x - planet[0].x;
+	var dy = planet[1].y - planet[0].y;
+
+	var f = dx * dx + dy * dy;
+	var fr = Math.sqrt(f);
+
+	var gax = 2 / f * dx;
+	var gay = 2 / f * dy;
+
+    planet[0].x += planet[0].vx;
+	planet[0].vx += planet[0].ax + gax;
+	planet[0].y += planet[0].vy;
+	planet[0].vy += planet[0].ay + gay;
+	
+    planet[1].x += planet[1].vx;
+	planet[1].vx += planet[1].ax - gax;
+	planet[1].y += planet[1].vy;
+	planet[1].vy += planet[1].ay - gay;
+
+
+	for (var p = 0; p < 2; p++)
+	{
+		var xInt = Math.round(planet[p].x);
+		var yInt = Math.round(planet[p].y);
+		var thing = planet[p].element;
+		thing.style.left = xInt.toString().concat( "px" );
+		thing.style.top = yInt.toString().concat( "px" );
+	}
+	}
+
+	setInterval(Tick, 30);
+
+</script>
+</body>
+
+</html>
