@@ -2,21 +2,58 @@
 <html>
 
 <body onkeyup="KeyUp(event)" onkeydown="KeyDown(event)">
-<img src="redball.png"id="x">
+
+<p id = "scoreText">
+
+	42
+
+</p>
+
+<p id = "velocityText">
+
+	7
+
+</p>
 
 <img src="blueball.png"id="y">
+<img src="greenball.png"id="z">
+<img src="redball.png"id="x">
+<img src="cross.png"id="c">
 
 <script>
 
+var intervalHandle = 0
+
+
+var score = 150;
+
+
+var windowWidth = window.innerWidth
+	|| document.documentElement.clientWidth
+	|| document.body.clientWidth;
+
+var windowHeight = window.innerHeight
+	|| document.documentElement.clientHeight
+	|| document.body.clientHeight;
+
+		var planetWidth = 96;
+		var planetHeight = 96;
+
+		var boundaryWidth = windowWidth - planetWidth;
+		var boundaryHeight = windowHeight - planetHeight;
+
+var cross = document.getElementById("c");
+	cross.style.position="absolute";
+
 var planet = [];
 
-// We are Planet 0
+// Player is Planet 0
 
 	planet.push( {
 		element: document.getElementById("x"), 
-		x: 100.0,
-		y: 100.0,
-		vx: 1.0,
+		x: 400.0,
+		y: 130.0,
+		vx: 0.85,
 		vy: 0.0,
 		ax: 0.0,
 		ay: 0.0
@@ -27,15 +64,28 @@ var planet = [];
 
 	planet.push( {
 		element: document.getElementById("y"), 
-		x: 450.0,
+		x: 400.0,
 		y: 450.0,
-		vx: -1.0,
+		vx: -0.85,
 		vy: 0.0,
 		ax: 0.0,
 		ay: 0.0
 	});
 
 	planet[1].element.style.position="absolute";
+
+		planet.push( {
+		element: document.getElementById("z"), 
+		x: 400.0,
+		y: 450.0,
+		vx: -0.85,
+		vy: 0.0,
+		ax: 0.0,
+		ay: 0.0
+	});
+
+	planet[2].element.style.position="absolute";
+
 
 
 var x = 100.0;
@@ -100,8 +150,62 @@ if (event.keyCode == 39)
 	
 	}
 
-	function Tick()
+
+	function bounceCheck(planet)
 	{
+
+			var bounced = 0;
+
+
+		if (planet.x < 0)
+		{
+
+				bounced++;
+			planet.x *= -1;
+			planet.vx *= -1;
+
+		}
+
+		if (planet.y< 0)
+		{
+
+				bounced++;
+			planet.y *= -1;
+			planet.vy*= -1;
+
+		}
+
+
+		if (planet.x > boundaryWidth)
+		{
+
+				bounced++;
+			planet.x = 2 * boundaryWidth - planet.x;
+			planet.vx *= -1;
+
+		}
+
+		if (planet.y > boundaryHeight)
+		{
+
+				bounced++;
+			planet.y = 2 * boundaryHeight - planet.y;
+			planet.vy *= -1;
+
+		}
+		
+		return bounced;
+
+	}
+
+		function DOOMtick(){
+
+			location.reload();
+
+		}
+
+
+	function Tick(){
 
 	var dx = planet[1].x - planet[0].x;
 	var dy = planet[1].y - planet[0].y;
@@ -112,15 +216,72 @@ if (event.keyCode == 39)
 	var gax = 2 / f * dx;
 	var gay = 2 / f * dy;
 
-    planet[0].x += planet[0].vx;
 	planet[0].vx += planet[0].ax + gax;
-	planet[0].y += planet[0].vy;
+    planet[0].x += planet[0].vx;
 	planet[0].vy += planet[0].ay + gay;
+	planet[0].y += planet[0].vy;
+
+		bounceCheck (planet[0]);
 	
-    planet[1].x += planet[1].vx;
 	planet[1].vx += planet[1].ax - gax;
-	planet[1].y += planet[1].vy;
+    planet[1].x += planet[1].vx;
 	planet[1].vy += planet[1].ay - gay;
+	planet[1].y += planet[1].vy;
+
+		var bounced = bounceCheck (planet[1]);
+
+			if (bounced > 0){
+
+				score -= Math.round(bounced * Math.random() * 300);
+
+				document.getElementById("scoreText").innerHTML = score;
+
+			}
+
+		var scoreVelocity = Math.sqrt( planet[1].vx * planet[1].vx + planet[1].vy * planet[1].vy );
+
+			scoreVelocity = Math.round(scoreVelocity * 1000);
+
+		document.getElementById("velocityText").innerHTML = scoreVelocity
+
+		if (scoreVelocity >= 1500){
+
+			score++;
+
+			document.getElementById("scoreText").innerHTML = score;
+
+		}
+
+		if (scoreVelocity <= 500){
+
+			score -= 1;
+
+			document.getElementById("scoreText").innerHTML = score;
+
+		}
+
+
+		var dx = planet[1].x - planet[0].x;
+
+		var dy = planet[1].y - planet[0].y;
+
+		var distance = Math.sqrt( dx * dx + dy * dy);
+
+		if (distance < 64){
+
+			score -= 10;
+
+			document.getElementById("scoreText").innerHTML = score;
+
+		}
+
+
+		if (score <= -1){
+
+			clearInterval(intervalHandle);
+			intervalHandle = setInterval(DOOMtick, 5000);
+
+		}
 
 
 	for (var p = 0; p < 2; p++)
@@ -131,9 +292,18 @@ if (event.keyCode == 39)
 		thing.style.left = xInt.toString().concat( "px" );
 		thing.style.top = yInt.toString().concat( "px" );
 	}
+
+	var xCenter = Math.round((planet[0].x + planet[1].x) / 2);
+	var yCenter = Math.round((planet[0].y + planet[1].y) / 2);
+
+
+		cross.style.left = xCenter.toString().concat( "px" );
+		cross.style.top = yCenter.toString().concat( "px" );
+
+
 	}
 
-	setInterval(Tick, 30);
+	intervalHandle = setInterval(Tick, 30);
 
 </script>
 </body>
